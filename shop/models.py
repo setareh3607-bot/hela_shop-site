@@ -9,3 +9,6 @@ class category(models.Model):
     class Meta:
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
+        
+    def __str__(self):
+        return self.title
