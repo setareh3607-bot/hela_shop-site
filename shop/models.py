@@ -13,6 +13,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
+        indexes = (models.Index(fields=['slug']), models.Index(fields=['parent']),)
         
     def __str__(self):
         return self.title
@@ -29,6 +30,10 @@ class Customer(models.Model):
     class Meta:
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربرها'
+        ordering = ('first_name', 'last_name',)
+        indexes = (
+            models.Index(fields=['first_name']),
+            models.Index(fields=['last_name']),models.Index(fields=['phone']),)
         
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -37,13 +42,16 @@ class Customer(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='نام برند')
     slug = models.SlugField(max_length=150, unique=True, allow_unicode=True, blank=True, null=True)
+    is_active = models.BooleanField(default=True, verbose_name='فعال') 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
     
     class Meta:
         verbose_name = 'برند'
         verbose_name_plural = 'برندها'
-    
+        ordering =('name',)
+        indexes = (models.Index(fields=['name']), models.Index(fields=['slug']),)
+        
     def __str__(self):
         return self.name
     
@@ -63,9 +71,16 @@ class Product(models.Model):
     discount_price = models.PositiveIntegerField(default=0, verbose_name='مبلغ تخفیف')
     rating = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(5)], 
         verbose_name='امتیاز محصول از ۰ تا ۵')
+    
+    
     class Meta:
         verbose_name = 'محصول'
         verbose_name_plural = 'محصولات'
+        ordering =('name',)
+        indexes = (models.Index(fields=['name']),)
         
     def __str__(self):
         return self.name
+    
+    def __repr__(self):
+        return f"<Product: id={self.pk}, name='{self.name}'>"
