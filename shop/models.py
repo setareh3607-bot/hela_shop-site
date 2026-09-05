@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Category(models.Model):
     title = models.CharField(max_length=100, unique=True, verbose_name='عنوان دسته یندی')
@@ -7,8 +8,8 @@ class Category(models.Model):
     parent = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True, related_name='children', verbose_name='دسته بندی والد') 
     
     class Meta:
-        verbose_name = 'دسته بندی'
-        verbose_name_plural = 'دسته بندی ها'
+        verbose_name ='دسته بندی'
+        verbose_name_plural ='دسته بندی ها'
         
     def __str__(self):
         return self.title
@@ -26,3 +27,35 @@ class Customer(models.Model):
         
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+class Brand(models.Model):
+    name = models.CharField(max_length=150, unique=True, verbose_name='نام برند')
+    slug = models.SlugField(max_length=150, unique=True, allow_unicode=True, blank=True, null=True)
+    
+    class Meta:
+        verbose_name = 'برند'
+        verbose_name_plural = 'برندها'
+    
+    def __str__(self):
+        return self.name
+    
+    
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    brief_explanation = models.CharField(max_length=250, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    price = models.IntegerField(blank=True, null=True)
+    stock = models.IntegerField(default=0)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
+    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, blank=True, null=True)
+    image = models.ImageField(upload_to='product/', blank=True, null=True, verbose_name='تصویر محصول')
+    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name= 'تاریخ آخرین به روزرسانی')
+    is_active = models.BooleanField(default=True, verbose_name='آیا کالا برای فروش فعال است')
+    discount_price = models.PositiveIntegerField(default=0, verbose_name='مبلغ تخفیف')
+    
+    class Meta:
+        verbose_name = 'محصول'
+        verbose_name_plural = 'مجصولات'
+        
+    def __str__(self):
+        return self.name
