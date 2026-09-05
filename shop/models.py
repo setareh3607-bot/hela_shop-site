@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Category(models.Model):
@@ -40,19 +40,20 @@ class Brand(models.Model):
     
     
 class Product(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name='نام محصول')
     brief_explanation = models.CharField(max_length=250, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    price = models.IntegerField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True, verbose_name='توضیحات ')
+    price = models.PositiveIntegerField(blank=True, null=True, verbose_name='قیمت')
     stock = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, blank=True, null=True)
     image = models.ImageField(upload_to='product/', blank=True, null=True, verbose_name='تصویر محصول')
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name= 'تاریخ آخرین به روزرسانی')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
     is_active = models.BooleanField(default=True, verbose_name='آیا کالا برای فروش فعال است')
     discount_price = models.PositiveIntegerField(default=0, verbose_name='مبلغ تخفیف')
-    
+    rating = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(5)], 
+        verbose_name='امتیاز محصول از ۰ تا ۵')
     class Meta:
         verbose_name = 'محصول'
         verbose_name_plural = 'مجصولات'
