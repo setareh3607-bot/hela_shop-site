@@ -7,10 +7,12 @@ class Category(models.Model):
     title = models.CharField(max_length=100, unique=True, verbose_name='عنوان دسته بندی')
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True, blank=True, verbose_name='شناسه آدرس')
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name='children', verbose_name='دسته بندی والد') 
-    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
+
     class Meta:
-        verbose_name ='دسته بندی'
-        verbose_name_plural ='دسته بندی ها'
+        verbose_name = 'دسته بندی'
+        verbose_name_plural = 'دسته بندی ها'
         
     def __str__(self):
         return self.title
@@ -21,16 +23,22 @@ class Customer(models.Model):
     phone = models.CharField(max_length=13, unique=True, verbose_name='شماره موبایل')
     email = models.EmailField(max_length=100, unique=True, verbose_name='ایمیل')
     address = models.TextField(blank=True, null=True, verbose_name='آدرس')
-    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
+
     class Meta:
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربرها'
         
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+    
+    
 class Brand(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='نام برند')
     slug = models.SlugField(max_length=150, unique=True, allow_unicode=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
     
     class Meta:
         verbose_name = 'برند'
@@ -43,7 +51,7 @@ class Brand(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name='نام محصول')
     brief_explanation = models.CharField(max_length=250, blank=True, null=True)
-    description = models.TextField(blank=True, null=True, verbose_name='توضیحات ')
+    description = models.TextField(blank=True, null=True, verbose_name='توضیحات')
     price = models.PositiveIntegerField(blank=True, null=True, verbose_name='قیمت')
     stock = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)
@@ -57,7 +65,7 @@ class Product(models.Model):
         verbose_name='امتیاز محصول از ۰ تا ۵')
     class Meta:
         verbose_name = 'محصول'
-        verbose_name_plural = 'مجصولات'
+        verbose_name_plural = 'محصولات'
         
     def __str__(self):
         return self.name
