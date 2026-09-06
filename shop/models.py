@@ -278,8 +278,6 @@ class CartItem(models.Model):
         verbose_name='تعداد'
     )
     unit_price = models.PositiveIntegerField(
-        max_digits=10,
-        decimal_places=2,
         verbose_name='قیمت واحد'
     )
     created_at = models.DateTimeField(
