@@ -303,5 +303,5 @@ class CartItem(models.Model):
             f'<CartItem: id={self.id}, '
             f'cart_id={self.cart_id}, '
             f'product_id={self.product_id}, '
-            f'qty={self.quantity} >'
+            f'qty={self.quantity}>'
         )
