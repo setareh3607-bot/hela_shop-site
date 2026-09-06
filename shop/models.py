@@ -190,7 +190,6 @@ class Coupon(models.Model):
         default=PERCENTAGE,
         verbose_name='نوع تخفیف'
     )
-    
     min_purchase_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -261,4 +260,53 @@ class Cart(models.Model):
     
     def __repr__(self):
         return f'<Cart: id={self.id}, customer_id={self.customer_id}, is_paid={self.is_paid}>'
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(
+        'Cart',
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name='سبد خریداری',
+    )
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.CASCADE,
+        related_name='cart_items',
+        verbose_name='محصول'
+    )
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name='تعداد'
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='قیمت واحد'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد'
+    )
     
+    class Meta:
+        verbose_name = 'آیتم سبد خرید'
+        verbose_name_plural = 'آیتم های سبد خرید'
+        ordering = ('-created_at',)
+        unique_together = (('cart', 'product'),)
+        
+    @property
+    def total_price(self):
+        return self.quantity * self.unit_price
+    
+    def __str__(self):
+        return f'{self.quantity} * {self.product}'
+    
+    def __repr__(self):
+        return (
+            f'<CartItem: id={self.id}, '
+            f'cart_id={self.cart_id}, '
+            f'product_id={self.product_id}, '
+            f'qty={self.quantity} >'
+        )
