@@ -1,4 +1,4 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -6,7 +6,14 @@ from django.db import models
 class Category(models.Model):
     title = models.CharField(max_length=100, unique=True, verbose_name='عنوان دسته بندی')
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True, blank=True, verbose_name='شناسه آدرس')
-    parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name='children', verbose_name='دسته بندی والد') 
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='children',
+        verbose_name='دسته بندی والد'
+    )
     is_active = models.BooleanField(default=True, verbose_name='فعال')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
@@ -15,7 +22,10 @@ class Category(models.Model):
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
         ordering = ('title',)
-        indexes = (models.Index(fields=['slug']), models.Index(fields=['parent']),)
+        indexes = (
+            models.Index(fields=['slug']),
+            models.Index(fields=['parent']),
+        )
         
     def __str__(self):
         return self.title
@@ -39,7 +49,10 @@ class Customer(models.Model):
         verbose_name_plural = 'کاربرها'
         ordering = ('first_name', 'last_name',)
         indexes = (
-            models.Index(fields=['first_name']), models.Index(fields=['last_name']), models.Index(fields=['phone']),)
+            models.Index(fields=['first_name']),
+            models.Index(fields=['last_name']),
+            models.Index(fields=['phone']),
+        )
         
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -59,7 +72,10 @@ class Brand(models.Model):
         verbose_name = 'برند'
         verbose_name_plural = 'برندها'
         ordering = ('name',)
-        indexes = (models.Index(fields=['name']), models.Index(fields=['slug']),)
+        indexes = (
+            models.Index(fields=['name']),
+            models.Index(fields=['slug']),
+        )
         
     def __str__(self):
         return self.name
@@ -69,20 +85,74 @@ class Brand(models.Model):
     
     
 class Product(models.Model):
-    name = models.CharField(max_length=100, verbose_name='نام محصول')
-    brief_explanation = models.CharField(max_length=250, blank=True, null=True, verbose_name='توضیح مختصر')
-    description = models.TextField(blank=True, null=True, verbose_name='توضیحات')
-    price = models.PositiveIntegerField(blank=True, null=True, verbose_name='قیمت')
-    stock = models.PositiveIntegerField(default=0, verbose_name='موجودی')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name='products', blank=True, null=True, verbose_name='دسته بندی')
-    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, related_name='products', blank=True, null=True, verbose_name='برند')
-    image = models.ImageField(upload_to='product/', blank=True, null=True, verbose_name='تصویر محصول')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
-    is_active = models.BooleanField(default=True, verbose_name='آیا کالا برای فروش فعال است')
-    discount_price = models.PositiveIntegerField(default=0, verbose_name='مبلغ تخفیف')
-    rating = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(5)], 
-        verbose_name='امتیاز محصول از ۰ تا ۵')
+    name = models.CharField(
+        max_length=100,
+        verbose_name='نام محصول'
+    )
+    brief_explanation = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        verbose_name='توضیح مختصر'
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='توضیحات'
+    )
+    price = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='قیمت'
+    )
+    stock = models.PositiveIntegerField(
+        default=0,
+        verbose_name='موجودی'
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        related_name='products',
+        blank=True,
+        null=True,
+        verbose_name='دسته بندی'
+    )
+    brand = models.ForeignKey(
+        Brand,
+        on_delete=models.SET_NULL,
+        related_name='products',
+        blank=True,
+        null=True,
+        verbose_name='برند'
+    )
+    image = models.ImageField(
+        upload_to='product/',
+        blank=True,
+        null=True,
+        verbose_name='تصویر محصول'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد'
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='تاریخ آخرین به روزرسانی'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='آیا کالا برای فروش فعال است'
+    )
+    discount_price = models.PositiveIntegerField(
+        default=0,
+        verbose_name='مبلغ تخفیف'
+    )
+    rating = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        verbose_name='امتیاز محصول از ۰ تا ۵'
+    )
     
     class Meta:
         verbose_name = 'محصول'
@@ -108,7 +178,7 @@ class Coupon(models.Model):
         max_length=50,
         unique=True,
         verbose_name='کد'
-    )  
+    )
     discount_value = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -151,7 +221,7 @@ class Coupon(models.Model):
         return self.code
     
     def __repr__(self):
-        return f"<Coupon: code={self.code} type={self.discount_type}>"
+        return f"<Coupon: code={self.code}, type={self.discount_type}>"
         
         
 class Cart(models.Model):
@@ -172,12 +242,13 @@ class Cart(models.Model):
         verbose_name='تاریخ پرداخت'
     )
     coupon = models.ForeignKey(
-        Coupon, 
-        on_delete=models.SET_NULL, 
-        related_name='carts', 
+        Coupon,
+        on_delete=models.SET_NULL,
+        related_name='carts',
         null=True,
         blank=True,
-        verbose_name='کوپن')
+        verbose_name='کوپن'
+    )
     
     class Meta:
         verbose_name = 'سبد خرید'
