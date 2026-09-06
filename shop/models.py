@@ -70,9 +70,6 @@ class Brand(models.Model):
         verbose_name = 'برند'
         verbose_name_plural = 'برندها'
         ordering = ('name',)
-        indexes = (
-            models.Index(fields=['slug']),
-        )
         
     def __str__(self):
         return self.name
