@@ -23,7 +23,6 @@ class Category(models.Model):
         verbose_name_plural = 'دسته بندی ها'
         ordering = ('title',)
         indexes = (
-            models.Index(fields=['slug']),
             models.Index(fields=['parent']),
         )
         
@@ -51,7 +50,6 @@ class Customer(models.Model):
         indexes = (
             models.Index(fields=['first_name']),
             models.Index(fields=['last_name']),
-            models.Index(fields=['phone']),
         )
         
     def __str__(self):
@@ -73,7 +71,6 @@ class Brand(models.Model):
         verbose_name_plural = 'برندها'
         ordering = ('name',)
         indexes = (
-            models.Index(fields=['name']),
             models.Index(fields=['slug']),
         )
         
@@ -280,7 +277,7 @@ class CartItem(models.Model):
         validators=[MinValueValidator(1)],
         verbose_name='تعداد'
     )
-    unit_price = models.DecimalField(
+    unit_price = models.PositiveIntegerField(
         max_digits=10,
         decimal_places=2,
         verbose_name='قیمت واحد'
