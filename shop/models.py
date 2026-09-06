@@ -38,7 +38,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=50, verbose_name='نام خانوادگی')
     phone = models.CharField(max_length=13, unique=True, verbose_name='شماره موبایل')
     email = models.EmailField(max_length=100, unique=True, verbose_name='ایمیل')
-    address = models.TextField(blank=True, null=True, verbose_name='آدرس')
+    address = models.TextField(blank=True, verbose_name='آدرس')
     is_active = models.BooleanField(default=True, verbose_name='فعال')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
