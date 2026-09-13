@@ -298,3 +298,99 @@ class CartItem(models.Model):
             f'product_id={self.product_id}, '
             f'qty={self.quantity}>'
         )
+
+
+class Order(models.Model):
+    PENDING = 'pending'
+    PROCESSING = 'processing'
+    SHIPPED = 'shipped'
+    DELIVERED = 'delivered'
+    CANCELLED = 'cancelled'
+    STATUS_CHOICES = (
+        (PENDING, 'در انتظار'),
+        (PROCESSING, 'در حال پردازش'),
+        (SHIPPED, 'ارسال شده'),
+        (DELIVERED, 'تحویل داده شد'),
+        (CANCELLED, 'لغو شده')
+    )
+    customer = models.ForeignKey(
+        "Customer",
+        related_name='orders',
+        verbose_name="مشتری",
+        on_delete=models.PROTECT
+    )
+    address = models.TextField(
+        verbose_name="آدرس تحویل",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد'
+    )
+    status = models.CharField(
+        choices=STATUS_CHOICES,
+        max_length=20,
+        default=PENDING,
+        verbose_name='وضعیت'
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='تاریخ آخرین به روزرسانی'
+    )
+    
+    class Meta:
+        verbose_name = "سفارش"
+        verbose_name_plural = "سفارش ها"
+        ordering = ('-created_at',)
+        indexes = (models.Index(fields=['created_at']),)
+        
+    def __str__(self):
+        return f'سفارش {self.pk} - {self.customer}'
+    
+    def __repr__(self):
+        return f"<Order: id={self.pk}, customer_id={self.customer_id}, status='{self.status}'>"
+
+    
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        "Order",
+        related_name='items',
+        verbose_name="سفارش",
+        on_delete=models.CASCADE,
+    )
+    product = models.ForeignKey(
+        "Product",
+        related_name='order_items',
+        verbose_name="محصول",
+        on_delete=models.PROTECT,
+    )
+    price = models.PositiveIntegerField(
+        verbose_name='قیمت'
+    )
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name='تعداد'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد'
+    )
+    
+    class Meta:
+        verbose_name = 'آیتم سفارش'
+        verbose_name_plural = 'آیتم های سفارش'
+        ordering = ('-created_at',)
+        
+    @property
+    def total_price(self):
+        return self.quantity * self.price
+
+    def __str__(self):
+        return f'{self.quantity} * {self.product}'
+
+    def __repr__(self):
+        return (
+            f'<OrderItem: id={self.pk}, '
+            f'order_id={self.order_id}, '
+            f'product_id={self.product_id}>'
+        )
