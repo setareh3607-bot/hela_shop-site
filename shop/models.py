@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Category(models.Model):
@@ -394,3 +394,12 @@ class OrderItem(models.Model):
             f'order_id={self.order_id}, '
             f'product_id={self.product_id}>'
         )
+
+
+class User(AbstractUser):
+    phone = models.CharField(
+        max_length=13,
+        unique=True,
+        verbose_name='تلفن'
+    )
+    
