@@ -22,9 +22,6 @@ class Category(models.Model):
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
         ordering = ('title',)
-        indexes = (
-            models.Index(fields=['parent']),
-        )
         
     def __str__(self):
         return self.title
@@ -38,7 +35,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=50, verbose_name='نام خانوادگی')
     phone = models.CharField(max_length=13, unique=True, verbose_name='شماره موبایل')
     email = models.EmailField(max_length=100, unique=True, verbose_name='ایمیل')
-    address = models.TextField(blank=True, verbose_name='آدرس')
+    address = models.TextField(default="", blank=True, verbose_name='آدرس')
     is_active = models.BooleanField(default=True, verbose_name='فعال')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='تاریخ آخرین به روزرسانی')
@@ -85,13 +82,13 @@ class Product(models.Model):
     )
     brief_explanation = models.CharField(
         max_length=250,
+        default="",
         blank=True,
-        null=True,
         verbose_name='توضیح مختصر'
     )
     description = models.TextField(
+        default="",
         blank=True,
-        null=True,
         verbose_name='توضیحات'
     )
     price = models.PositiveIntegerField(
@@ -144,7 +141,7 @@ class Product(models.Model):
     rating = models.PositiveIntegerField(
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        validators=[MaxValueValidator(5)],
         verbose_name='امتیاز محصول از ۰ تا ۵'
     )
     
@@ -179,7 +176,7 @@ class Coupon(models.Model):
         verbose_name='مقدار تخفیف'
     )
     discount_type = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=DISCOUNT_TYPE_CHOICES,
         default=PERCENTAGE,
         verbose_name='نوع تخفیف'
@@ -247,7 +244,6 @@ class Cart(models.Model):
         verbose_name = 'سبد خرید'
         verbose_name_plural = 'سبد خرید ها'
         ordering = ('customer', '-created_at',)
-        indexes = (models.Index(fields=['customer']),)
     
     def __str__(self):
         return f'سبد خرید مشتری: {self.customer or "مهمان"}'
